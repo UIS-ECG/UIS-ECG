@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.js"></script>
+
+    <title>Sistema IoT para monitoreo de actividad cardiaca con variabilidad de frecuencia para el diagnóstico de enfermedades cardiovasculares</title>
+    <script type="text/javascript" src="D:\Pagina\ECG-main\ECG\papaparse\papaparse.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+    <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    <link rel="shortcut icon" href="https://upload.wikimedia.org/wikipedia/commons/d/d5/Universidad_Industrial_de_Santander_Logo.jpg" type="image/x-icon">
+    <link rel="stylesheet" href="css/estilos.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans+Condensed:ital,wght@0,300;0,700;1,300&amp;display=swap" rel="stylesheet">
+
+</head>
+
+    
+
+
+
+
+<body>
+    <header>
+        <section class="textos-header">
+            <h1 class="TituloPrincipal">Sistema IoT para monitoreo de actividad cardiaca con variabilidad de frecuencia para el diagnóstico de enfermedades cardiovasculares</h1>
+            <input class="Boton" type="file" id="upload-csv" accept="CSV">
+            <button class="Boton" id="btn-upload-csv">Lectura Señal</button>
+        </section>
+
+
+        <div class="wave" style="height: 150px; overflow: hidden;"><svg viewBox="0 0 500 150" preserveAspectRatio="none" style="height: 100%; width: 100%;"><path d="M0.00,49.81 C149.99,149.50 349.21,-49.81 500.01,49.81 L500.01,149.50 L0.00,149.50 Z" style="stroke: none; fill: white"></path></svg></div>
+    </header>
+
+
+    <main class="main">
+        <section class="Grafica_prueba">
+            <div class="contenedor-grafica">
+                <h2 class="titulo2"><span class="Numero">1</span> Segmento de la señal electrocardiográfica original</h2>
+                <hr>
+                <div id="ECG" style="height: 300px; width: 100%;"></div>
+            </div>
+        </section>
+        <section>
+            <div class="contenedor-diagnostico">
+                <h2 class="titulo2"><span class="Numero">2</span> Diagnóstico</h2>
+                <hr>
+                <script type="text/javascript" id="Conexionthingspeak">
+                    let btn_upload_2 = document.getElementById('btn-upload-csv').addEventListener('click', () => {
+                        const requestURL = 'https://api.thingspeak.com/channels/1383805/fields/1.json?api_key=LH0MSPZ0QHNEGI73&results=2';
+                        const request = new XMLHttpRequest();
+                        request.open('GET', requestURL);
+                        request.responseType = 'json';
+                        request.send();
+                        request.onload = function() {
+                            const DiagnosticoJSON = request.response;
+                            console.log(DiagnosticoJSON.feeds[1].field1)
+                            Diagnostico = DiagnosticoJSON.feeds[1].field1;
+                            Diagnostico = parseFloat(Diagnostico);
+                            console.log(Diagnostico)
+                            if (Diagnostico == 0) {
+                                document.getElementById("diagnóstico").value = 'Ritmo cardiaco Normal';
+                            } else if (Diagnostico == 1) {
+                                document.getElementById("diagnóstico").value = 'Taquicardia';
+                            } else {
+                                document.getElementById("diagnóstico").value = 'Bradicardia';
+                            }
+                        };
+                    })
+                </script>
+                <div class="Card-Diagnostico">
+                    <div class="Texto-Card-Diagnostico">
+                        Diagnóstico para el paciente: <input class="cuadro" type="text" name="diagnostico" id="diagnóstico" enable="false">
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+        <section class="Contenedor-Autores">
+            <h2 class="titulo2"><span class="Numero">3</span> Autores del proyecto</h2>
+
+            <div class="Autores">
+
+                <div class="cartas">
+                    <img src="https://lh3.googleusercontent.com/fife/AAWUweV1DsNb5eZGXv5WO_PqXoSr7gQ0pRGDl2cOinHyrWvtiTYyaWdkz3CpZRULxV_1NnsQKmnCz_4h7q-ggYvAhpeR1bLLjpsE8A7KOSkiQ3mYI4OxTH7Rf4JUvQdYZWxvxE_H3JVhq4QhvTmBszkn8azL5FS-8bcK39uDsU46rxi0ThXIl1C3LTureQpxMrbhOgeCNan2kCV8C8YKnT56WpD0o5Uupu1O0IFmLuGTZRgbH_d5Ci9Ggb03vPkCJKGAG6MZJ6LNF3ZwD3aIqnzVkIl09LPhp-u6F67xC2cIOEzJ10jbKhx7hlQn1JNKqaljwOiK2D41f-DSEvpClwbzyRGw5n1iW2csybEC8eMTuv1k9foc8M7YDdlJATnujuHwSm2LQSUKta1jxn3MQwVw6AX8iXnOUAQgqWd5ylOe3nqIdiTOa5TOuPxz8tJgDJFS8zmesczc1F10PLNGvfJHrysFKPf7wWfVsBKdSJKmzlr_GkbfHvHBaqZPm4ZusqUDV_o_gSXbLyoWZCnWwQ3rqV77S6Nuhsv1t_KeG7APEhiQgn_fNNFdOJy-X5RH8i2LBf-YxfgkTVk5RN63zEeRUNHz_WBuBMI8AyJP37i0gXebKz_Nani7_gKWiAp_R-R3orPvVC0RDDMW07OJg0WJgncL1W-9XOzJdMlzbxTO185Bs-2kUsh4lyQ4au6Mvb8QkO-PwCqrksEGpRjsvM5Hh-rwPC4k7d2g4A=w807-h667-ft" alt="" class="Imagen-us">
+                    <div class="Contenido-texto-card">
+                        <h3 class="Nombre">Karen Dayana Martinez Siado</h3>
+                        <p>Estudiante de ingeniería electrónica de la Universidad Industrial de Santander</p>
+                    </div>
+                </div>
+
+                <br>
+                <div class="cartas">
+                    <img src="https://lh3.googleusercontent.com/fife/AAWUweXTY9uOjh_bv2NwStthxvfXJ-_1tkjT7QCZPLwUTHeuMYn7DsiO6IpzO1J7MgCTdO0mSRBtSfgD0Ve3JsDykfQZSL723qzZcSLWY2ihocjILzP0Y31R-P3MKWsBvPSgy2-uSPDcw_4Y9pOhFgPuw4mD0CLgYpbrBDQTL_mAbdscljFgy2rg-d7gxriMIGdVFzBMoFtR7mE5nf0jEsABfwy_70dBnEdF-_AuJbEAvvmkwRMaVpjWeG1ClvMLvQf4C-Uz8xbLbEmQFPP62z8hihuWcnc4sZvBO5bAfXzX-6ks4hH1eLZxxaO_k139Y7goLoqXAmDMkOdm13yg4rkd8LxpEjLVBzzXUNxgCYbugD63zcjxHw7JXctcsyRLU8oyLrxXB_6bmLnm3NiIfJsEV2XYvQ79i7ch-oRio0e25j5k7f6LjzMgSKAZR4SRdhSa0OBmj34nLATZBF5y4nIAc7_ImxIvlQEgONUU7Bc1hym2i2VOEXFjeb0G5PCbmSyVmG9BxZY8K-QO4dH0iNzjGpgOVP6iYAcytmgFkMxYLnPIzcVyVb7O9lvZogPeb7MAA1LvDHRfVe9NSdutWFOAq0lbuTwFMtROxYH8z0aKB-n1bSsqCSXHZ8bKpfN3Vag3q3XN2kRcXWDn0_qS1NGdfw2ewVhFk8jSrgYHGXVgSuTogNEkJMtvE9kU5K32tabqOmJdqNK7rmzvU6bPLRX5p5BSj06vdh9fXg=w807-h667-ft" alt="" class="Imagen-us">
+                    <div class="Contenido-texto-card">
+                        <h3 class="Nombre">Carlos Fabian Dovales Galvis</h3>
+                        <p>Estudiante de ingeniería electrónica de la Universidad Industrial de Santander</p>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+        </section>
+        <section class="Contenedor-Director">
+            <div class="Director">
+                <h2 class="titulo2"><span class="Numero">4</span> Director</h2>
+
+                <div class="cartas">
+                    <img src="https://lh3.googleusercontent.com/fife/AAWUweUkzlrrx7rTMLcSA3Jfogas76gtu_MCcZ7P8t8xdws8krGxzHxNm9ub7oHK1umkD8ZMu4IoNGN13KRUhQOHO_ks3wO0I6klrFjwdZE2flX-nW_sxolRJ6Nj5tbMgL9bljqSayRLZsAT4YNwlb9edyTv3p9h2JY_vlwfcraEt_3heva12Bn9riZx-XRiNDxn9h_ygIPZvHfKfwQFbJDUQqt7ScRO1RLjAFcK_NJJle52JFBwKvZ8dj4vO9ydwp5rlfFYN6dKcSLS5FAbQ_CdbHo5aYN2Ud_ptJp2MLt0bQifOxfAQ57HYzeU3HFI_9BeBFblqaDNVje5CDWfe6QZm09vmtbD_74qqnnw3oYIZl0g7gQrB5akNBkeTNzciYqequHy42ylX4kh07maRJd_zRF2v0_VXheQ7iIPwLZhpizpqroo9L0ls3o2qN3g18P_oM6UVKg-ji22D5SKCxQAupL2ZZLl0RGimLw6OyK_LZnhAx7B8Z6dFNC9mMiwI4VGF2PcG_WSw3EeVlAV5B9eLh5ZEmzOgo4i8AFxaQrEsrMmIC7v46cMDpI27HZJ7rd1zV6PDBK6ev2MpGwJ6tgtVn6X5c6aM5CNvwkGO3xfkZu8YlCVZT_SX-ivnvq-Sw6CiF1xxartK_VM8hVT6Xqf2_3nYk6kMNbC9SErxCTcYeMv8AhlZciD2-IgwTt4cNeba2wkP4nc7EB0iUu-3Q0Ea22j5BnbFPd6nA=w1366-h667-ft" alt="" class="Imagen-us">
+                    <div class="Contenido-texto-card">
+                        <h3 class="Nombre">Jaime Guillermo Barrero</h3>
+                        <p>Ingeniero electrónico, Magister en ingeniería área de electrónica y docente universitario de la Universidad Industrial de Santander adscrito a la escuela de Ingenierías Eléctrica Electrónica y Telecomunicaciones (E3T).</p>
+                    </div>
+                </div>
+
+                <br>
+            </div>
+
+        </section>
+    </main>
+
+
+
+    
+    <script type="text/javascript">
+        var datosy = [];
+        var caracteristicas = [];
+        var Diagnostico;
+        let btn_upload = document.getElementById('btn-upload-csv').addEventListener('click', () => {
+            Papa.parse(document.getElementById('upload-csv').files[0], {
+                download: true,
+                header: false,
+                complete: function(results) {
+                    console.log('Datos adquiridos');
+                    for (i = 0; i <= results.data.length - 1; i++) {
+                        datosy[i] = parseFloat(results.data[i])/100;
+                    }
+                    
+                    var datosx = []
+                    for (var i = 0; i <= datosy.length - 1; i++) {
+                        datosx[i] = (i + 1) / 500;
+                    }
+                    var data = [];
+                    var dataSeries = { type: "line" };
+                    var dataPoints = [];
+
+                    for (var i = 0; i < datosx.length; i++){
+                        dataPoints.push({
+                            x: datosx[i],
+                            y: datosy[i]
+                        });
+                    }
+                    dataSeries.dataPoints=dataPoints;
+                    data.push(dataSeries);
+                    console.log("Se agregaron datos en data")
+                    console.log(data)
+                    var options = {
+                        zoomEnabled: true,
+                        animationEnabled: true,
+                        title: {
+                            text: "Señal Electrocardiografica"
+                        },
+                        data: data  // random data
+                    };
+
+                    $("#ECG").CanvasJSChart(options);
+
+
+                }
+            })
+
+        })
+    </script>
+     <footer>
+        <div class="contenedor footer">
+            <div class="correos">
+                <h4 class="Contacto">Correos electrónicos</h4>
+                <p>carlosdovales@gmail.com</p>
+                <p>krenmtz20@gmail.com </p>
+            </div>
+        </div>
+        <hr>
+        <h2 class="Titulo-final">© Carlos Dovales | Karen Martinez</h2>
+    </footer>
+
+</body></html>
